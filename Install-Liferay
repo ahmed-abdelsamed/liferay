@@ -1,0 +1,279 @@
+Unzip the download package whenever you find fit. The unzipped directory will be the LIFERAY_HOME directory.
+To start Liferay, just run the script LIFERAY_HOME/tomcat-x.xx.xx/bin/startup.sh ; only on Windows environments run the script LIFERAY_HOME\tomcat-x.xx.xx\bin\startup.bat .
+By default, once Liferay is up, a browser will open its local URL (http://localhost:8080/).
+To log in, use the email test@liferay.com , and the password test (cl0ud).
+To stop Liferay, just run the script LIFERAY_HOME/tomcat-x.xx.xx/bin/shutdown.sh ; only on Windows environments run the script LIFERAY_HOME\tomcat-x.xx.xx\bin\shutdown.bat .
+With these steps, you will have Liferay up and running in a "demo" mode. Liferay will use an Hypersonic DB by default, but it is unfit for production. Also, test@liferay.com is an administrator account with a default password, so it should be changed eventually. Yet, these steps are good to get some idea on how Liferay looks like and works.
+
+===================================================================================
+Liferay 7.4.13.u62
+Mysql 8
+elasticsearch 7.16.3  detect from liferay elasticsearch embedded
+
+## Ctreate three VMs Rocky 8.6
+## edit on all VMs
+## Edit the /etc/security/limits.conf and add the lines:
+     soft   nofile  1024
+     hard   nofile  65535 
+
+
+Edit the /etc/pam.d/login by adding the line:
+session required /lib/security/pam_limits.so
+
+$ echo 65535 > /proc/sys/fs/file-max
+Use the ulimit command to set the file descriptor limit to the hard limit specified in /etc/security/limits.conf.
+$ulimit -n unlimited
+Restart your system.
+
+	 
+----------------------------------------------------------
+# On liferay VM
+sudo download  java-11-openjdk 
+sudo dnf install mysql
+
+/etc/profile 
+export JAVA_HOME="/opt/jdk-11.0.17"
+export PATH=$JAVA_HOME/bin:$PATH
+
+
+# On Mysql VM
+sudo dnf install mysql-server
+
+
+
+--------------------------------------
+## can be using root instead of create new user
+
+    GOOD way if remote privileges from other VM.
+### Mysql VM
+create database lportal;
+CREATE USER 'root'@'%' IDENTIFIED BY 'r00t';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+flush privileges;
+exit;
+
+OR 
+mysql> create database lportal;
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'r00t';
+flush privileges;
+exit;
+
+OR
+mysql> create database lportal;
+mysql> create user 'lr_user@localhost' identified by 'abc123';
+myql> grant all privileges on lportal.* to 'lr_user@localhost' with grant option;
+
+
+# must be check before configure liferay 
+from liferay:
+[root@liferay liferay-dxp-7.4.13.u62]# mysql -h mysql_VM_IP -u root -p lportal
+Enter password:
+
+
+
+--------------------------------------------------------------
+[root@liferay liferay-dxp-7.4.13.u62]# pwd
+/opt/liferay-dxp-7.4.13.u62
+
+root@liferay liferay-dxp-7.4.13.u62]# vi portal-ext.properties
+'
+include-and-override=portal-developer.properties
+#
+# MySQL
+#
+jdbc.default.driverClassName=com.mysql.cj.jdbc.Driver
+jdbc.default.url=jdbc:mysql://host_IP:3306/lportal?useUnicode=true&characterEncoding=UTF-8&useFastDateParsing=false
+jdbc.default.username=root
+jdbc.default.password=r00t
+'
+---------------------------------------
+
+----------------------------------------
+## Licese
+cp -p activation-key-dxp-trial-7.4.xml /opt/liferay-dxp/liferay-dxp-7.4.13.u62/deploy/
+
+----------------------------------------
+chmod -R +x /opt/liferay-dxp-7.4.13.u62/tomcat-9*/bin/ 
+
+
+# Start
+ ./liferay-dxp-7.4.13.u62/tomcat-9.0.71/bin/startup.sh
+
+http://IP:8080
+Login: test@liferay.com
+Password: test
+ 
+# monitor setup
+tail -f /liferay-dxp-7.4.13.u62/tomcat-9.0.71/logs/catalina.out
+
+
+[root@liferay liferay-dxp-7.4.13.u62]# ss -ntlp
+State          Recv-Q         Send-Q                 Local Address:Port                  Peer Address:Port        Process
+LISTEN         0              50                         127.0.0.1:11311                      0.0.0.0:*            users:(("java",pid=20874,fd=1868))
+LISTEN         0              100                          0.0.0.0:8080                       0.0.0.0:*            users:(("java",pid=20874,fd=46))
+LISTEN         0              128                          0.0.0.0:22                         0.0.0.0:*            users:(("sshd",pid=999,fd=5))
+LISTEN         0              1                          127.0.0.1:8005                       0.0.0.0:*            users:(("java",pid=20874,fd=2566))
+LISTEN         0              128                             [::]:22                            [::]:*            users:(("sshd",pid=999,fd=7))
+LISTEN         0              70                                 *:33060                            *:*            users:(("mysqld",pid=13377,fd=21))
+LISTEN         0              128                                *:3306                             *:*            users:(("mysqld",pid=13377,fd=24))
+[root@liferay liferay-dxp-7.4.13.u62]#
+
+===========================================================================
+## shutdown
+./liferay-dxp-7.4.13.u62/tomcat-9.0.71/bin/shutdown.sh 
+waiting
+
+ss -ntlp 
+[root@liferay bin]# ss -nlpt
+State          Recv-Q         Send-Q                 Local Address:Port                  Peer Address:Port        Process
+LISTEN         0              128                          0.0.0.0:22                         0.0.0.0:*            users:(("sshd",pid=999,fd=5))
+LISTEN         0              128                             [::]:22                            [::]:*            users:(("sshd",pid=999,fd=7))
+LISTEN         0              70                                 *:33060                            *:*            users:(("mysqld",pid=13377,fd=21))
+LISTEN         0              128                                *:3306                             *:*            users:(("mysqld",pid=13377,fd=24))
+[root@liferay bin]#
+
+
+
+==================================================================
+##Install Liferay as a Service
+sudo vi /etc/systemd/system/liferay.service
+#Add the following contents (make sure to user your own paths)
+---
+[Unit]
+Description=Liferay Apache Tomcat Web Application Container
+After=network.target
+
+[Service]
+Type=forking
+Environment=JAVA_HOME=/opt/jdk-11.0.17
+Environment=CATALINA_PID=/opt/liferay-dxp-7.4.13.u62/tomcat-9.0.71/temp//tomcat.pid
+Environment=CATALINA_HOME=/opt/liferay-dxp-7.4.13.u62/tomcat-9.0.71
+Environment=CATALINA_BASE=/opt/liferay-dxp-7.4.13.u62/tomcat-9.0.71
+Environment='CATALINA_OPTS=-Xms1024M -Xmx2048M -server -XX:+UseParallelGC'
+Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart=/opt/liferay-dxp-7.4.13.u62/tomcat-9.0.71/bin/startup.sh
+ExecStop=/opt/liferay-dxp-7.4.13.u62/tomcat-9.0.71/bin/shutdown.sh
+
+User=root
+Group=root
+UMask=0007
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+---
+
+When you are finished, save and close the file.
+
+Next, reload the systemd daemon so that it knows about our service file:
+
+sudo systemctl daemon-reload
+Now enable the service
+
+sudo systemctl enable liferay
+Start the Liferay service by typing:
+
+sudo systemctl start liferay
+Double check that it started without errors by typing:
+
+sudo systemctl status liferay
+===================================================================Elasticsearch ======================================
+ 
+ sudo rpm -ivh https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.3-x86_64.rpm
+
+sudo systemctl daemon-reload
+ sudo systemctl enable elasticsearch.service
+ 
+ vi /etc/elasticsearch/elasticsearch.yml 
+ ---
+cluster.name: LiferayElasticsearchCluster
+cluster.initial_master_nodes: elasticsearch.spring.local
+ 
+node.name: elasticsearch.spring.local
+
+
+network.host: 0.0.0.0
+http.port: 9200
+transport.tcp.port: 9300
+transport.host: 0.0.0.0
+transport.bind_host: 0.0.0.0
+transport.publish_host: 0.0.0.0
+discovery.type: single-node
+---
+ 
+systemctl start elasticsearch
+[root@elasticsearch ~]# ss -ntlp
+State             Recv-Q             Send-Q                         Local Address:Port                         Peer Address:Port            Process
+LISTEN            0                  128                                  0.0.0.0:22                                0.0.0.0:*                users:(("sshd",pid=871,fd=4))
+LISTEN            0                  128                                  0.0.0.0:9200                              0.0.0.0:*                users:(("java",pid=3806,fd=292))
+LISTEN            0                  128                                  0.0.0.0:9300                              0.0.0.0:*                users:(("java",pid=3806,fd=290))
+LISTEN            0                  128                                     [::]:22                                   [::]:*                users:(("sshd",pid=871,fd=6))
+[root@elasticsearch ~]#
+
+
+  
+ Test Elasticsearch:
+ curl -X GET 'http://localhost:9200'
+ 
+ 
+ ---------------------------------------------
+./bin/elasticsearch-plugin install [plugin-name]
+/usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu   #if systemd installed elasticsearch
+
+Replace [plugin-name] with the Elasticsearch plugin’s name.
+analysis-icu
+analysis-kuromoji
+analysis-smartcn
+analysis-stempel
+
+vi /etc/profile
+'
+export Elasticsearch_Home="/opt/elasticsearch/elasticsearch-8.6.2"
+export PATH=$Elasticsearch_Home/bin:$PATH
+'
+/var/log/elasticsearch/LiferayElasticsearchCluster.log
+--------
+===========================================Configure Elasticsearch in Liferay===========================================
+{https://lifedev-solutions.blogspot.com/2021/11/liferay-74-elasticsearch-integration.html}
+Configure Elasticsearch in Liferay
+Navigate to Control Panel -> System Settings -> Search -> Elasticsearch7.
+
+Modify “EMBEDDED” Operation Mode with “REMOTE”, and check the "Production Mode Enabled" checkbox:
+
+Make sure "Network Host Addresses" points to the standalone Elasticsearch URL, and "Cluster Name" is the same as defined in Elasticsearch configuration.
+
+Save the configuration. Check again the Elasticsearch connection, and make sure it points to remote one now:
+
+Switch to “Index Actions” tab, and Re-index the search indexes:
+
+===========================================Visualize Indexes with Kibana================================================================
+ rpm -ivh https://artifacts.elastic.co/downloads/kibana/kibana-7.16.3-x86_64.rpm
+ 
+nano /etc/kibana/kibana.yml
+server.host: "0.0.0.0"
+
+
+systemctl restart  kibana
+
+[root@elasticsearch opt]# ss -ntlp
+State             Recv-Q             Send-Q                         Local Address:Port                         Peer Address:Port            Process
+LISTEN            0                  128                                  0.0.0.0:5601                              0.0.0.0:*                users:(("node",pid=2504,fd=19))
+LISTEN            0                  128                                  0.0.0.0:9200                              0.0.0.0:*                users:(("java",pid=1783,fd=292))
+LISTEN            0                  128                                  0.0.0.0:9300                              0.0.0.0:*                users:(("java",pid=1783,fd=290))
+LISTEN            0                  128                                  0.0.0.0:22                                0.0.0.0:*                users:(("sshd",pid=838,fd=4))
+LISTEN            0                  128                                     [::]:22                                   [::]:*                users:(("sshd",pid=838,fd=6))
+[root@elasticsearch opt]#
+
+===========================================================================
+## website
+liferayiseasy.blogspot.com
+
+https://help.liferay.com/hc/en-us/articles/360029031471-Preparing-for-Install?_ga=2.184737837.586957295.1677134020-1557194329.1675169114
+
+https://www.liferay.com/documents/10182/246659966/Liferay+DXP+7.0+Compatibility+Matrix.pdf
+Liferay Digital Experience Platform 7.4.13 Update 62
+Elasticsearch (Sidecar)
+CLIENT VERSION
+7.16.3

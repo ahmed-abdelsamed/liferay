@@ -31,6 +31,7 @@ quit
 End your bash session.
 
 exit
+
 --------------------
 Start a Search Engine Server
 A DXP cluster requires a search engine (running as a separate process) accessible to all of the DXP cluster nodes. Please see Installing a Search Engine for more information.

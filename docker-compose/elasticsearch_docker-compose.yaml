@@ -1,0 +1,14 @@
+es-node-1:
+    image: elasticsearch:2.4.6-alpine
+    environment:
+      - cluster.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200

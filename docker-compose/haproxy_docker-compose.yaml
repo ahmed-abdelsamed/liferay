@@ -1,0 +1,7 @@
+haproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile-haproxy
+    ports:
+      - '80:80'
+    hostname: lb-haproxy.local

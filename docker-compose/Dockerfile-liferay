@@ -1,0 +1,9 @@
+FROM liferay/portal:7.0.6-ga7
+
+COPY ./configs/portal-ext.properties $LIFERAY_HOME/
+COPY ./configs/\*.config $LIFERAY_HOME/osgi/configs/
+COPY ./configs/\*.jar $LIFERAY_HOME/osgi/portal/
+-----
+docker build -t my-liferay-7-tutorial -f Dockerfile-liferay . # builds the "Dockerfile-liferay". The created image will be "my-liferay-7-tutorial". The dot at the end is for pointing the context directory
+docker run -d my-liferay-7-tutorial # we run our image
+docker exec -it CONTAINER_NAME /bin/bash # we enter the container so we can test if everything is there. You can find the CONTAINER_NAME using docker container ls command

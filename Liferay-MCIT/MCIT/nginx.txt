@@ -1,0 +1,15 @@
+     server {                                                                                                                                                                                   
+                                                                                                                                                                                                
+        #server_name www.webserver-stg.mcit.local;                                                                                                                                              
+        server_name 10.30.61.121;                                                                                                                                                               
+        location /liferay {                                                                                                                                                                     
+                proxy_pass http://10.30.61.210:8080/web/guest;                                                                                                                                  
+                proxy_buffering off;                                                                                                                                                            
+                proxy_set_header X-Real-IP $remote_addr;                                                                                                                                        
+                proxy_set_header X-Forwarded-Host $host;                                                                                                                                        
+                proxy_set_header X-Forwarded-Port $server_port;                                                                                                                                 
+        }                                                                                                                                                                                       
+     }  
+	 
+	 
+=======================================

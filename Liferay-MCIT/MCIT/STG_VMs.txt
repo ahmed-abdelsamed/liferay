@@ -1,0 +1,32 @@
+DXP    No>BN&>81Hf516*
+Web	   eT#<*FIJ6!8W<5W
+ELS    eM*xK424Ex!Y!#UM
+DB     m<<!56cY(21T2GR
+
+
+10.30.61.121 webserver-stg webserver-stg.mcit.local                                                                                                                                                 
+10.30.61.210 liferaydxp-stg liferaydxp-stg.mcit.local                                                                                                                                               
+10.30.61.181 elasticsearch-stg elasticsearch-stg.mcit.local                                                                                                                                         
+10.30.62.162 mariadb-stg mariadb-stg.mcit.local  
+
+
+
+
+
+include-and-override=portal-developer.properties                                                                                                                                                    
+#                                                                                                                                                                                                   
+# Mariadb                                                                                                                                                                                           
+#                                                                                                                                                                                                   
+virtual.hosts.valid.hosts=10.30.61.210,localhost,127.0.0.1                                                                                                                                          
+jdbc.default.driverClassName=org.mariadb.jdbc.Driver                                                                                                                                                
+jdbc.default.url=jdbc:mariadb://10.30.62.162:3306/lportal?useUnicode=true&characterEncoding=UTF-8&useFastDateParsing=false                                                                          
+jdbc.default.username=liferayuser                                                                                                                                                                   
+jdbc.default.password=liferaypassword                                                                                                                                                               
+retry.jdbc.on.startup.delay=10                                                                                                                                                                      
+retry.jdbc.on.startup.max.retries=10                                                                                                                                                                
+                                                                                                                                                                                                    
+LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE=0.0.0.0:11311                                                                                                          
+LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ADD_PERIOD_SAMPLE_PERIOD_DATA=false                                                                                                                              
+LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false                                                                                                                                                    
+LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED=false                                                                                                                                            
+LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_ENABLED=false

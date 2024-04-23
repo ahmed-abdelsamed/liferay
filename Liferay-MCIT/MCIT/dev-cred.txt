@@ -1,0 +1,16 @@
+10.30.61.193    uportal-dxp-d-01    Liferay  K6V59r64OQ(sot<zmq
+10.30.61.192    localhost           ELS         s^E9-oAv*)X5=91%7>
+10.30.61.191    erptest.mcit.local  Web server   J^tJKtHq)u#nc03361
+10.30.62.170    localhost           DB       q>2AH&cfbQ68346
+
+
+10.30.61.193  webserver-dev webserver-dev.mcit.local
+10.30.61.192  liferaydxp-dev liferaydxp-dev.mcit.local
+10.30.61.191  elasticsearch-dev elasticsearch-dev.mcit.local
+10.30.62.170  mariadb-dev     mariadb-dev.mcit.local
+
+
+
+https://cdn.lfrs.sl/releases.liferay.com/dxp/2023.q4.6/liferay-dxp-tomcat-2023.q4.6-1708527579.tar.gz
+
+http://10.30.61.191/;LRSESSIONID=liferaydxp-dev

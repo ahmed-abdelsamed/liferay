@@ -1,0 +1,59 @@
+name = MariaDB Server                                                                                                                                                                           
+                                                                                                                                                                                                
+#baseurl = https://dlm.mariadb.com/repo/mariadb-server/10.6/yum/rhel/9/x86_64                                                                                                                   
+                                                                                                                                                                                                
+baseurl = https://archive.mariadb.org/mariadb-10.6.4/yum/centos8-amd64                                                                                                                          
+                                                                                                                                                                                                
+gpgkey = file:///etc/pki/rpm-gpg/MariaDB-Server-GPG-KEY                                                                                                                                         
+                                                                                                                                                                                                
+gpgcheck = 1                                                                                                                                                                                    
+gpgkey = file:///etc/pki/rpm-gpg/MariaDB-MaxScale-GPG-KEY                                                                                                                                       
+                                                                                                                                                                                                
+gpgcheck = 0                                                                                                                                                                                    
+                                                                                                                                                                                                
+enabled = 1                                                                                                                                                                                     
+enabled = 1                                                                                                                                                                                     
+                                                                                                                                                                                                
+module_hotfixes = 1                                                                                                                                                                             
+                                                                                                                                                                                                
+                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                                                                                                
+[mariadb-maxscale]                                                                                                                                                                              
+                                                                                                                                                                                                
+# To use the latest stable release of MaxScale, use "latest" as the version                                                                                                                     
+                                                                                                                                                                                                
+# To use the latest beta (or stable if no current beta) release of MaxScale, use "beta" as the version                                                                                          
+                                                                                                                                                                                                
+name = MariaDB MaxScale                                                                                                                                                                         
+                                                                                                                                                                                                
+#baseurl = https://dlm.mariadb.com/repo/maxscale/latest/yum/rhel/9/x86_64                                                                                                                       
+                                                                                                                                                                                                
+baseurl = https://archive.mariadb.org/mariadb-10.6.4/yum/centos8-amd64                                                                                                                          
+                                                                       
+																	   
+																	   
+																	   
+																	   
+
+
+yum --disablerepo="*" --enablerepo="<desired-repo-id>" install package-name
+
+
+nothing provides libcrypto.so.1.1()(64bit) needed by MariaDB-server-10.6.4-1.el8.x86_64                                                                                                         
+  - nothing provides libcrypto.so.1.1(OPENSSL_1_1_0)(64bit) needed by MariaDB-server-10.6.4-1.el8.x86_64                                                                                            
+  - nothing provides libss libcrypto l.so.1.1()(64bit) needed by MariaDB-server-10.6.4-1.el8.x86_64                                                                                                            
+  - nothing provides libssl.so.1.1(OPENSSL_1_1_0)(64bit) needed by MariaDB-server-10.6.4-1.el8.x86_64                                                                                               
+  - nothing provides libssl.so.1.1(OPENSSL_1_1_1)(64bit) needed by MariaDB-server-10.6.4-1.el8.x86_64                                                                                               
+  - nothing provides libpmem.so.1()(64bit) needed by MariaDB-server-10.6.4-1.el8.x86_64                                                                                                             
+  - nothing provides libpmem.so.1(LIBPMEM_1.0)(64bit) needed by MariaDB-server-10.6.4-1.el8.x86_64                                                                                                  
+(try to add '--skip-broken' to skip uninstallable packages or '--nobest' to use not only best candidate packages) 
+
+
+ - nothing provides libboost_program_options.so.1.66.0()(64bit) needed by galera-4-26.4.8-1.el8.x86_64                                                                                             
+  - nothing provides socat needed by galera-4-26.4.8-1.el8.x86_64                                                                                                                                   
+  - nothing provides libboost_program_options.so.1.66.0()(64bit) needed by galera-4-26.4.9-1.el8.x86_64                                                                                             
+  - nothing provides socat needed by galera-4-26.4.9-1.el8.x86_64         
+  
+  - nothing provides libboost_program_options.so.1.66.0()(64bit) needed by galera-4-26.4.8-1.el8.x86_64                                                                                             
+  - nothing provides libboost_program_options.so.1.66.0()(64bit) needed by galera-4-26.4.9-1.el8.x86_64 

@@ -1,0 +1,9 @@
+cluster.name: LiferayElasticsearchCluster
+node.name: els-1
+network.host: 0.0.0.0
+http.port: 9200
+transport.tcp.port: 9300
+transport.host: 0.0.0.0
+transport.bind_host: 0.0.0.0
+transport.publish_host: 0.0.0.0
+discovery.type: single-node

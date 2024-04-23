@@ -1,0 +1,8 @@
+ # line 17 : uncomment and change (any name you like)
+
+cluster.name: els-cluster
+# line 56 : uncomment and change (listen all)
+network.host: Ip_node2
+
+node.name: els-2
+

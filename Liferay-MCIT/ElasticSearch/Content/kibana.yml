@@ -1,0 +1,29 @@
+ # line 11 : if access to Kibana from other hosts, uncomment and change (listen all)
+
+server.port: 5601
+server.host: "IP_kibana"
+
+# line 26 : uncomment and specify the public URL of Kibana server
+
+server.publicBaseUrl: "https://dlp.srv.world:5601/
+"
+# line 32 : uncomment and change to your hostname
+
+server.name: "dlp.srv.world
+"
+# line 37-39 : uncomment and change to your certificate
+
+server.ssl.enabled: true
+
+server.ssl.certificate: /etc/kibana/http_ca.crt
+
+server.ssl.key: /etc/kibana/http.p12
+
+#server.ssl.keyPassphrase: "Gen by elasticsearch-reset-password"
+elasticsearch.ssl.verificationMode: none
+
+elasticsearch.hosts: ["https://IP_Node1:9200"]
+
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "1llwfEnD4yqgkR8X9STg"        # reset password
+
